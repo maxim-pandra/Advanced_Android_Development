@@ -17,13 +17,19 @@ package com.example.android.sunshine.app;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.SyncAdapterType;
 import android.net.ConnectivityManager;
 import android.preference.PreferenceManager;
 import android.text.format.Time;
 
+import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
+import com.example.android.sunshine.app.sync.SunshineSyncAdapter.LocationStatus;
+
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+
+import static com.example.android.sunshine.app.sync.SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN;
 
 public class Utility {
 
@@ -42,6 +48,26 @@ public class Utility {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         return prefs.getString(context.getString(R.string.pref_location_key),
                 context.getString(R.string.pref_location_default));
+    }
+
+    @SuppressWarnings("ResourceType")
+    @LocationStatus
+    public static int getLocationStatus(Context context) {
+        SharedPreferences pref = PreferenceManager.getDefaultSharedPreferences(context);
+        return pref.getInt(context.getString(R.string.pref_location_status_key), SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
+    }
+    public static void setLocationStatus(Context context, @LocationStatus int locationStatus) {
+        SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor spe = prefs.edit();
+        spe.putInt(context.getString(R.string.pref_location_status_key), locationStatus);
+        spe.apply();
+    }
+
+    public static void setLocationStatusUnknown(Context context) {
+        SharedPreferences preferences = PreferenceManager.getDefaultSharedPreferences(context);
+        SharedPreferences.Editor spe = preferences.edit();
+        spe.putInt(context.getString(R.string.pref_location_status_key), SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN);
+        spe.apply();
     }
 
     public static boolean isMetric(Context context) {
