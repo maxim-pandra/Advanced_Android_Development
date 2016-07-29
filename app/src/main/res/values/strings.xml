@@ -108,5 +108,8 @@
 
     <!-- Strings related to Notification preference -->
     <string name="pref_last_notification">last_notification</string>
+    
+    <string name="empty_string">No information available</string>
+    <string name="no_network">No network available</string>
 
 </resources>
