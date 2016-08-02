@@ -304,7 +304,7 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
         if ( mForecastAdapter.getCount() == 0 ) {
             if ( null != mEmptyView ) {
                 // if cursor is empty, why? do we have an invalid location
-                @LocationStatus int locationStatus = Utility.getLocationStatus(getActivity());
+                    @LocationStatus int locationStatus = Utility.getLocationStatus(getActivity());
                 int message = R.string.empty_string;
                 if (!Utility.CheckInternetConnection(getActivity()) ) {
                     message = R.string.empty_forecast_list_no_network;
@@ -312,6 +312,8 @@ public class ForecastFragment extends Fragment implements LoaderManager.LoaderCa
                     message = R.string.empty_forecast_list_server_down;
                 } else if (locationStatus == SunshineSyncAdapter.LOCATION_STATUS_SERVER_INVALID) {
                     message = R.string.empty_forecast_list_server_error;
+                } else if (locationStatus == SunshineSyncAdapter.LOCATION_STATUS_INVALID) {
+                    message = R.string.empty_forecast_list_invalid_location;
                 }
                 mEmptyView.setText(message);
             }

@@ -60,7 +60,7 @@ public class Utility {
         SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(context);
         SharedPreferences.Editor spe = prefs.edit();
         spe.putInt(context.getString(R.string.pref_location_status_key), locationStatus);
-        spe.apply();
+        spe.commit();
     }
 
     public static void setLocationStatusUnknown(Context context) {

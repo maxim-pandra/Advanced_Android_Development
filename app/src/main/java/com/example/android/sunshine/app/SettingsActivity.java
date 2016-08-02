@@ -28,9 +28,14 @@ import android.preference.PreferenceManager;
 import com.example.android.sunshine.app.data.WeatherContract;
 import com.example.android.sunshine.app.sync.SunshineSyncAdapter;
 
+import static com.example.android.sunshine.app.sync.SunshineSyncAdapter.LOCATION_STATUS_INVALID;
+import static com.example.android.sunshine.app.sync.SunshineSyncAdapter.LOCATION_STATUS_OK;
+import static com.example.android.sunshine.app.sync.SunshineSyncAdapter.LOCATION_STATUS_UNKNOWN;
+import static com.example.android.sunshine.app.sync.SunshineSyncAdapter.syncImmediately;
+
 /**
  * A {@link PreferenceActivity} that presents a set of application settings.
- * <p>
+ * <p/>
  * See <a href="http://developer.android.com/design/patterns/settings.html">
  * Android Design: Settings</a> for design guidelines and the <a
  * href="http://developer.android.com/guide/topics/ui/settings.html">Settings
@@ -95,6 +100,21 @@ public class SettingsActivity extends PreferenceActivity
             if (prefIndex >= 0) {
                 preference.setSummary(listPreference.getEntries()[prefIndex]);
             }
+        } else if (key.equals(getString(R.string.pref_location_key))) {
+            @SunshineSyncAdapter.LocationStatus int locationStatus = Utility.getLocationStatus(this);
+            switch (locationStatus) {
+                case LOCATION_STATUS_OK:
+                    preference.setSummary(stringValue);
+                    break;
+                case LOCATION_STATUS_UNKNOWN:
+                    preference.setSummary(getString(R.string.pref_location_unknown_description, value));
+                    break;
+                case LOCATION_STATUS_INVALID:
+                    preference.setSummary(getString(R.string.pref_location_error_description, value));
+                    break;
+                default:
+                    preference.setSummary(stringValue);
+            }
         } else {
             // For other preferences, set the summary to the value's simple string representation.
             preference.setSummary(stringValue);
@@ -112,9 +132,10 @@ public class SettingsActivity extends PreferenceActivity
     // start our synchronization here
     @Override
     public void onSharedPreferenceChanged(SharedPreferences sharedPreferences, String key) {
-        if ( key.equals(getString(R.string.pref_location_key)) ) {
-            SunshineSyncAdapter.syncImmediately(this);
-        } else if ( key.equals(getString(R.string.pref_units_key)) ) {
+        if (key.equals(getString(R.string.pref_location_key))) {
+            Utility.setLocationStatusUnknown(this);
+            syncImmediately(this);
+        } else if (key.equals(getString(R.string.pref_units_key))) {
             // units have changed. update lists of weather entries accordingly
             getContentResolver().notifyChange(WeatherContract.WeatherEntry.CONTENT_URI, null);
         }
